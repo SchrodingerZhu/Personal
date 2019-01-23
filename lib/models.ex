@@ -14,7 +14,9 @@ defmodule Personal.Page do
       :url_collision
     else
       case Personal.Database.insert(page) do
-        {:ok, _} -> :ok
+        {:ok, _} ->
+          Personal.CacheAgent.Url.put_new(page.url, page.id)
+          :ok
         info -> {:insertion_error, info}
       end
     end
@@ -42,6 +44,47 @@ defmodule Personal.Message do
       else
         IO.puts(:stderr, "wrong email!")
         :wrong_email
+      end
+    end
+end
+
+defmodule Personal.User do
+  use Memento.Table,
+    attributes: [:id, :name, :password, :password_hash],
+    index: [:name],
+    type: :ordered_set,
+    autoincrement: true
+
+    def new(name, password) do
+      hashed = Comeonin.Argon2.add_hash(password)
+      %Personal.User{name: name, password: nil, password_hash: hashed.password_hash}
+    end
+
+    def add(user) do
+      case Personal.Database.insert(user) do
+        {:ok, _} ->
+          :ok
+        info ->
+          IO.puts(:stderr, "failed tp add user")
+          {:error, info}
+      end
+    end
+
+    def has_user?(name) do
+      case Personal.Database.find(Personal.User, {:==, :name, name}) do
+        [] -> false
+        _ -> true
+      end
+    end
+
+    def check_hash(name, password) do
+      case Personal.Database.find(Personal.User, {:==, :name, name}) do
+        [user] ->
+          case Comeonin.Argon2.check_pass(user, password) do
+            {:ok, _} -> true
+            _ -> false
+          end
+        _ -> false
       end
     end
 end

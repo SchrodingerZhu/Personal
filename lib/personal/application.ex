@@ -14,6 +14,14 @@ defmodule Personal.Application do
     #   keyfile: certificate_key_path()
     # ]
 
+    try do
+      Personal.Database.all(Personal.User)
+    rescue
+      Memento.DoesNotExistError ->
+        IO.puts(:stderr, "Database is not existed yet. Trying to create.")
+        Personal.Database.init()
+    end
+
     children = [
       Supervisor.child_spec({Personal.WWW, [config, cleartext_options]}, id: :www_cleartext),
       Supervisor.child_spec({Personal.CacheAgent, []}, id: :cache_agent)

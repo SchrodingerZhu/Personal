@@ -11,9 +11,10 @@ defmodule Personal.Database do
     Memento.start()
     case {
       Memento.Table.create(Personal.Page, disc_copies: nodes),
-      Memento.Table.create(Personal.Message, disc_copies: nodes)
+      Memento.Table.create(Personal.Message, disc_copies: nodes),
+      Memento.Table.create(Personal.User, disc_copies: nodes)
     } do
-      {:ok, :ok} ->
+      {:ok, :ok, :ok} ->
         IO.puts("tables are successfully created.")
       message ->
         IO.puts(:stderr, "failed to create tables, the return message is")
@@ -59,6 +60,13 @@ defmodule Personal.Database do
   def get(type, id) do
     {:ok, result} = Memento.transaction fn ->
       Memento.Query.read(type, id)
+    end
+    result
+  end
+
+  def find(type, opt) do
+    {:ok, result} = Memento.transaction fn ->
+      Memento.Query.select(type, opt)
     end
     result
   end

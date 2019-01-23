@@ -27,7 +27,9 @@ defmodule Personal.Mixfile do
       {:memento, "~> 0.2.1"},
       {:cmark, "~> 0.7"},
       {:raxx_static, "~> 0.7.0"},
-      {:exsync, "~> 0.2.3"}
+      {:exsync, "~> 0.2.3"},
+      {:comeonin, "~> 4.1"},
+      {:argon2_elixir, "~> 1.3"},
     ]
   end
 
