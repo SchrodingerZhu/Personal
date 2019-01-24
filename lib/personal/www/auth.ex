@@ -1,17 +1,16 @@
-defmodule Personal.WWW.AUth do
+defmodule Personal.WWW.Auth do
   use Raxx.SimpleServer
   @impl Raxx.SimpleServer
-  # def handle_request(request = %{method: :GET}, _state) do
-  #   # [_, subpath] = Map.get(request,:path)
-  #   # if Personal.CacheAgent.Url.has?(subpath) do
-  #   #   res = response(:ok)
-  #   #   page_id  = Personal.CacheAgent.Url.get(subpath)
-  #   #   page = Personal.CacheAgent.Page.get(page_id)
-  #   #   json(res, page)
-  #   # else
-  #   #   Personal.WWW.NotFoundPage.handle_request(request, 404)
-  #   # end
-  # end
+  def handle_request(request = %{method: :GET, }, _) do
+    cookie = Raxx.Session.SignedCookie.config(
+      nonce: UUID.uuid4 |> to_charlist |> Enum.take(12) |> to_string,
+      secret: UUID.uuid4 |> to_charlist |> Enum.take(32) |> to_string
+    )
+    x = response(:ok)
+    |> Raxx.Session.SignedCookie.embed({:user, 25}, cookie)
+    |> set_header("content-type", "application/json")
+    x
+  end
 
   def handle_request(request = %{method: :POST}, _state) do
     case URI.decode_query(request.body) do

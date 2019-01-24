@@ -30,6 +30,9 @@ defmodule Personal.Mixfile do
       {:exsync, "~> 0.2.3"},
       {:comeonin, "~> 4.1"},
       {:argon2_elixir, "~> 1.3"},
+      {:chacha20, "~> 1.0"},
+      {:exqueue, "~> 0.1.2"},
+      {:uuid, "~> 1.1"}
     ]
   end
 
