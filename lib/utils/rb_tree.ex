@@ -141,7 +141,7 @@ defmodule Personal.Utils.RbTree.Node do
     {color, l, k, r} = state
 
     case tree_type({color, l, k, r}) do
-      {color, {:node, :double_back, _, _, _}, x, {:node, :black, {:node, :red, b, y, c}, z, d}} ->
+      {color, {:node, :double_black, _, _, _}, x, {:node, :black, {:node, :red, b, y, c}, z, d}} ->
         {:node, color, {:node, :black, make_black(l), x, b}, y, {:node, :black, c, z, d}}
 
       {color, :bbempty, x, {:node, :black, {:node, :red, b, y, c}, z, d}} ->
