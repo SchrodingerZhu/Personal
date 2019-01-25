@@ -14,8 +14,8 @@ defmodule Personal.Page do
       :url_collision
     else
       case Personal.Database.insert(page) do
-        {:ok, _} ->
-          Personal.CacheAgent.Url.put_new(page.url, page.id)
+        {:ok, res} ->
+          Personal.CacheAgent.Url.put_new(res.url, res.id)
           :ok
         info -> {:insertion_error, info}
       end
