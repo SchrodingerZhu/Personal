@@ -132,7 +132,7 @@ defmodule Personal.Utils.RbTree.Node do
   @spec delete(tree(), any()) :: tree()
   def delete(t, x), do: blacken_root(del(t, x))
 
-  @spec tree_type(any()) :: {color(), any(), any(), any()}
+  @spec tree_type(any()) :: {color(), tree(), any(), tree()}
   # type_spec helper
   defp tree_type(state), do: state
 
@@ -150,7 +150,7 @@ defmodule Personal.Utils.RbTree.Node do
       {color, {:node, :double_black, _, _, _}, x, {:node, :black, b, y, {:node, :red, c, z, d}}} ->
         {:node, color, {:node, :black, make_black(l), x, b}, y, {:node, :black, c, z, d}}
 
-      {color, :double_black, x, {:node, :black, b, y, {:node, :red, c, z, d}}} ->
+      {color, :bbempty, x, {:node, :black, b, y, {:node, :red, c, z, d}}} ->
         {:node, color, {:node, :black, :empty, x, b}, y, {:node, :black, c, z, d}}
 
       {color, {:node, :black, a, x, {:node, :red, b, y, c}}, z, {:node, :double_black, _, _, _}} ->
