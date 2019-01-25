@@ -15,3 +15,14 @@ erl_crash.dump
 
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
+
+# Local database
+/.mnesia
+
+# Vscode
+/.vscode
+
+# Language Server
+/.elixir_ls
+
+

@@ -74,7 +74,11 @@ defmodule Personal.CacheAgent.Page do
         start_link(true, new_tree, mark + 1)
     after
       900_000 ->
-        start_link(true, tree, mark + 1)
+        if Personal.Utils.RbTree.is_empty?(tree) do
+          start_link(true, tree, 0)
+        else
+          start_link(true, tree, mark + 1)
+        end
     end
   end
 
