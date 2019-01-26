@@ -6,6 +6,7 @@ defmodule Personal.WWW do
     {%{ path: []}, Personal.WWW.HomePage},
     {%{method: :GET, path: ["pages", _url]}, Personal.WWW.Pages},
     {%{path: ["auth", "handshake"]}, Personal.WWW.AuthHandshake},
+    {%{path: ["auth"]}, Personal.WWW.Auth},
     {_, Personal.WWW.NotFoundPage}
   ])
 
