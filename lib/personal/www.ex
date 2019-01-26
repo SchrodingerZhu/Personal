@@ -5,7 +5,7 @@ defmodule Personal.WWW do
   section([], [
     {%{ path: []}, Personal.WWW.HomePage},
     {%{method: :GET, path: ["pages", _url]}, Personal.WWW.Pages},
-    {%{path: ["auth"]}, Personal.WWW.Auth},
+    {%{path: ["auth", "handshake"]}, Personal.WWW.AuthHandshake},
     {_, Personal.WWW.NotFoundPage}
   ])
 

@@ -1,4 +1,4 @@
-defmodule Personal.WWW.AuthHandshake do
+defmodule Personal.WWW.Auth do
   use Raxx.SimpleServer
   @impl Raxx.SimpleServer
   def handle_request(request = %{method: :GET, }, _) do
@@ -28,26 +28,27 @@ defmodule Personal.WWW.AuthHandshake do
   def handle_request(request = %{method: :POST}, _state) do
     case URI.decode_query(request.body) do
     %{"username" => username, "public_key" => public} ->
-        id = UUID.uuid4 |> Base.encode64
+        id = Personal.KeyService.gen_uuid
         response(:ok)
         |> Raxx.set_header(
           "set_cookie",
-          SetCookie.sertialize(
-            "raxx.session",
+          SetCookie.serialize(
+            "personal.sessionid",
             id
           )
         )
 
     %{"request" => "new_nonce", "id" => id} ->
-      nonce = %{nonce: UUID.uuid4 |> Base.encode64 |> Enum.take(24)}
+
+      nonce = %{nonce: Personal.KeyService.gen_nonce()}
       response(:ok)
       |> Raxx.set_header(
-        "content-type",
-        "application/json"
-      )
-      |> Raxx.set_body(
-        Jason.encode(nonce)
-      )
+          "set_cookie",
+          SetCookie.serialize(
+            "personal.nonce",
+            nonce
+          )
+        )
     #     |> render(greeting)
 
     _ ->

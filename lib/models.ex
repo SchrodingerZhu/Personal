@@ -50,14 +50,14 @@ end
 
 defmodule Personal.User do
   use Memento.Table,
-    attributes: [:id, :name, :password, :password_hash],
-    index: [:name],
+    attributes: [:id, :name, :password, :password_hash, :email],
+    index: [:name, :email],
     type: :ordered_set,
     autoincrement: true
 
-    def new(name, password) do
+    def new(name, password, email) do
       hashed = Comeonin.Argon2.add_hash(password)
-      %Personal.User{name: name, password: nil, password_hash: hashed.password_hash}
+      %Personal.User{name: name, password: nil, password_hash: hashed.password_hash, email: email}
     end
 
     def add(user) do
@@ -65,7 +65,7 @@ defmodule Personal.User do
         {:ok, _} ->
           :ok
         info ->
-          IO.puts(:stderr, "failed tp add user")
+          IO.puts(:stderr, "failed to add user")
           {:error, info}
       end
     end

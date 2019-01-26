@@ -15,6 +15,8 @@ defmodule Personal.WWW.Pages do
     end
   end
 
+
+
   def handle_request(request = %{method: :POST}, _state) do
     case URI.decode_query(request.body) do
       %{"name" => name} ->
