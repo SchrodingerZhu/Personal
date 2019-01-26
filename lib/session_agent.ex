@@ -56,8 +56,12 @@ defmodule Personal.SessionAgent do
         life_cycle(sessions, tree, mark)
 
       {:check_login, uuid, client} ->
-        {session, _} = sessions[uuid]
-        send(client, session.is_login)
+        case sessions[uuid] do
+          {session, _} ->
+            send(client, session.is_login)
+          _ ->
+            send(client, false)
+        end
         life_cycle(sessions, tree, mark)
 
       {:put_new, session} ->
