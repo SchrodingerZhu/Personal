@@ -1,7 +1,20 @@
 <main class="centered">
-  <section class="accent">
-    <h1><%= title %></h1>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/libsodium-wrappers/0.5.4/sodium.min.js"></script>
-  </section>
+<div class="login-page">
+    <%= if !info do %>
+     <div class="form">
+        <form class="login-username-form">
+          <input type="text" placeholder="username" id="username"/>
+          <button onclick=buildSessionForm()>NEXT</button>
+        </form>      
+     </div>
+    <% else %>
+    <div class="form">
+      <form class="login-password-form">
+          <input type="password" placeholder="password" id="password"/>
+          <button onclick="loginForm()">LOGIN</button>
+          <button onclick="clearSession()">BACK</button>
+      </form>
+      </div>
+    <% end %>
+</div>
 </main>

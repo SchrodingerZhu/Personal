@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>personal</title>
     <link rel="stylesheet" href="//fonts.lug.ustc.edu.cn/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="/auth.css">
     <link rel="stylesheet" href="/main.css">
     <link rel="icon" href="/favicon.ico">
   </head>
@@ -16,5 +17,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/Accessible-full.js"></script>
   <script type = "text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
   <script src="/main.js"></script>
+  <script> 
+    function buildSessionForm() {
+      var username = document.getElementById('username').value
+      buildSession(username)
+    }
+
+    function loginForm() {
+        var password = document.getElementById('password').value
+        login(password)
+    }
+  </script>
   </body>
 </html>

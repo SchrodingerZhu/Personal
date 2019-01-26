@@ -139,7 +139,6 @@ defmodule Personal.SessionAgent do
   def get(uuid) do
     pid = Agent.get(__MODULE__, fn x -> x end)
     send(pid, {:get, uuid, Kernel.self()})
-
     receive do
       ans -> ans
     end

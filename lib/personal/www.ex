@@ -11,6 +11,7 @@ defmodule Personal.WWW do
   ])
 
   @external_resource "lib/personal/public/main.css"
+  @external_resource "lib/personal/public/auth.css"
   @external_resource "lib/personal/public/main.js"
   use Raxx.Static, "./public"
   use Raxx.Logger, level: :info

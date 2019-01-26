@@ -65,10 +65,10 @@ defmodule Personal.KeyService do
   end
 
   def compare_boxedkey(keybox, uuid) do
-
     {res, nonce} = open_box(Base.decode64!(keybox), uuid)
-    IO.inspect(res)
+
     client_session = Personal.SessionAgent.get(uuid)
+    IO.inspect(client_session)
     {Personal.User.check_hash(client_session.username, res), nonce}
   end
 end

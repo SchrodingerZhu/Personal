@@ -11,12 +11,56 @@ defmodule Personal.WWW.AuthHandshake do
 
     cookies =
       if temp == nil do
-        nil
+        %{}
       else
         Cookie.parse(temp)
       end
 
     case Jason.decode!(request.body) do
+      %{"request" => "clear"} ->
+        Personal.SessionAgent.drop(cookies["personal.uuid"])
+
+        response(:ok)
+        |> Raxx.set_header(
+          "set-cookie",
+          SetCookie.expire("personal.uuid")
+        )
+        |> Map.update!(
+          :headers,
+          fn x ->
+            [
+              {
+                "set-cookie",
+                SetCookie.expire(
+                  "personal.server_pub",
+                  http_only: false
+                )
+              }
+              | x
+            ]
+          end
+        )
+        |> Map.update!(
+          :headers,
+          fn x ->
+            [
+              {
+                "set-cookie",
+                SetCookie.expire(
+                  "personal.nonce",
+                  http_only: false
+                )
+              }
+              | x
+            ]
+          end
+        )
+        |> Raxx.set_header(
+          "content-type",
+          "application/json"
+        )
+        |> Raxx.set_body(Jason.encode!(%{logout: true}))
+
       %{"request" => "logout"} ->
         cond do
           !Personal.SessionAgent.check(cookies["personal.uuid"]) ->
@@ -28,54 +72,53 @@ defmodule Personal.WWW.AuthHandshake do
           true ->
             Personal.SessionAgent.drop(cookies["personal.uuid"])
 
-            x =
-              response(:ok)
-              |> Raxx.set_header(
-                "set-cookie",
-                SetCookie.expire("personal.uuid")
-              )
-              |> Map.update!(
-                :headers,
-                fn x ->
-                  [
-                    {
-                      "set-cookie",
-                      SetCookie.expire(
-                        "personal.server_pub",
-                        http_only: false
-                      )
-                    }
-                    | x
-                  ]
-                end
-              )
-              |> Map.update!(
-                :headers,
-                fn x ->
-                  [
-                    {
-                      "set-cookie",
-                      SetCookie.expire(
-                        "personal.nonce",
-                        http_only: false
-                      )
-                    }
-                    | x
-                  ]
-                end
-              )
-              |> Raxx.set_header(
-                "content-type",
-                "application/json"
-              )
-              |> Raxx.set_body(Jason.encode!(%{logout: true}))
-
-            IO.inspect(x)
-            x
+            response(:ok)
+            |> Raxx.set_header(
+              "set-cookie",
+              SetCookie.expire("personal.uuid")
+            )
+            |> Map.update!(
+              :headers,
+              fn x ->
+                [
+                  {
+                    "set-cookie",
+                    SetCookie.expire(
+                      "personal.server_pub",
+                      http_only: false
+                    )
+                  }
+                  | x
+                ]
+              end
+            )
+            |> Map.update!(
+              :headers,
+              fn x ->
+                [
+                  {
+                    "set-cookie",
+                    SetCookie.expire(
+                      "personal.nonce",
+                      http_only: false
+                    )
+                  }
+                  | x
+                ]
+              end
+            )
+            |> Raxx.set_header(
+              "content-type",
+              "application/json"
+            )
+            |> Raxx.set_body(Jason.encode!(%{logout: true}))
         end
 
       %{"request" => "login", "box" => box} ->
         cond do
+          cookies["personal.uuid"] == nil ->
+            response(:bad_request)
+
           !Personal.SessionAgent.check(cookies["personal.uuid"]) ->
             response(:bad_request)
 
