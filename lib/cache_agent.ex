@@ -51,26 +51,41 @@ defmodule Personal.CacheAgent.Page do
     end
 
     now = Time.utc_now()
+
     case Personal.Utils.RbTree.min(tree) do
-      nil -> nil
+      nil ->
+        nil
+
       {mark_, time, id} ->
         if Time.diff(now, time, :second) > 1800 do
           Agent.update(__MODULE__, fn x -> Map.delete(x, id) end)
           start_link(true, Personal.Utils.RbTree.delete(tree, {mark_, time, id}), mark)
         end
     end
+
     receive do
       {:put_new, id, page} ->
         stamp = make_stamp(id, mark)
         Agent.update(__MODULE__, fn x -> Map.put(x, id, {page, stamp}) end)
         start_link(true, Personal.Utils.RbTree.insert(tree, stamp), mark + 1)
+
       {:drop, id} ->
         {_, stamp} = Agent.get_and_update(__MODULE__, fn x -> {x[id], Map.delete(x, id)} end)
         start_link(true, Personal.Utils.RbTree.delete(tree, stamp), mark)
+
       {:update, id} ->
         new_stamp = make_stamp(id, mark)
-        {_, old_stamp} = Agent.get_and_update(__MODULE__, fn x -> {x[id], Map.update!(x, id, fn {page, _} -> {page, new_stamp} end)} end)
-        new_tree = tree |> Personal.Utils.RbTree.delete(old_stamp) |> Personal.Utils.RbTree.insert(new_stamp)
+
+        {_, old_stamp} =
+          Agent.get_and_update(__MODULE__, fn x ->
+            {x[id], Map.update!(x, id, fn {page, _} -> {page, new_stamp} end)}
+          end)
+
+        new_tree =
+          tree
+          |> Personal.Utils.RbTree.delete(old_stamp)
+          |> Personal.Utils.RbTree.insert(new_stamp)
+
         start_link(true, new_tree, mark + 1)
     after
       900_000 ->
@@ -131,7 +146,7 @@ defmodule Personal.CacheAgent do
 
   def init(args) do
     x = spawn_link(Personal.CacheAgent.Url, :start_link, [false])
-    y = spawn_link(Personal.CacheAgent.Page, :start_link, [false, Personal.Utils.RbTree.new, 0])
+    y = spawn_link(Personal.CacheAgent.Page, :start_link, [false, Personal.Utils.RbTree.new(), 0])
     Agent.start_link(fn -> {x, y} end, name: :agents)
     {:ok, args}
   end

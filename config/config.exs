@@ -6,6 +6,4 @@ if Mix.env() == :dev do
 end
 
 config :mnesia,
-  dir: '.mnesia/#{Mix.env}/#{node()}'
-
-
+  dir: '.mnesia/#{Mix.env()}/#{node()}'

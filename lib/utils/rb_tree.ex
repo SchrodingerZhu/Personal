@@ -9,10 +9,18 @@ defmodule Personal.Utils.RbTree do
   def size(tree), do: tree.size
 
   @spec insert(t(), any()) :: t()
-  def insert(tree, x), do: %Personal.Utils.RbTree{root: Personal.Utils.RbTree.Node.insert(tree.root, x), size: tree.size + 1}
+  def insert(tree, x),
+    do: %Personal.Utils.RbTree{
+      root: Personal.Utils.RbTree.Node.insert(tree.root, x),
+      size: tree.size + 1
+    }
 
   @spec delete(t(), any()) :: t()
-  def delete(tree, x), do: %Personal.Utils.RbTree{root: Personal.Utils.RbTree.Node.delete(tree.root, x), size: tree.size - 1}
+  def delete(tree, x),
+    do: %Personal.Utils.RbTree{
+      root: Personal.Utils.RbTree.Node.delete(tree.root, x),
+      size: tree.size - 1
+    }
 
   @spec min(t()) :: any()
   def min(tree), do: Personal.Utils.RbTree.Node.min(tree.root)
@@ -31,7 +39,7 @@ defmodule Personal.Utils.RbTree do
   def new(), do: __struct__()
 end
 
-defimpl Inspect, for: Personal.Utils.RbTree  do
+defimpl Inspect, for: Personal.Utils.RbTree do
   def inspect(tree, _opt) do
     "#RbTree<" <> Kernel.inspect(Personal.Utils.RbTree.to_list(tree)) <> ">"
   end
@@ -76,9 +84,11 @@ defmodule Personal.Utils.RbTree.Node do
   @spec make_black(tree()) :: tree()
   defp make_black({:node, :black, l, k, r}), do: {:node, :double_black, l, k, r}
   defp make_black({:node, _, l, k, r}), do: {:node, :black, l, k, r}
+
   defp make_black(:empty) do
     :bbempty
   end
+
   defp make_black(t), do: t
 
   @spec balance({color(), tree(), any(), tree()}) :: tree()
@@ -196,11 +206,10 @@ defmodule Personal.Utils.RbTree.Node do
 
   @spec from_list(list()) :: tree()
   def from_list(l) do
-    List.foldl(l, :empty, fn (x, y) -> insert(y, x) end)
+    List.foldl(l, :empty, fn x, y -> insert(y, x) end)
   end
 
   @spec to_list(tree()) :: list()
   def to_list(:empty), do: []
   def to_list({:node, _, l, x, r}), do: to_list(l) ++ [x] ++ to_list(r)
-
 end

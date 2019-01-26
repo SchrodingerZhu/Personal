@@ -3,7 +3,7 @@ defmodule Personal.WWW do
   use Raxx.Router
 
   section([], [
-    {%{ path: []}, Personal.WWW.HomePage},
+    {%{path: []}, Personal.WWW.HomePage},
     {%{method: :GET, path: ["pages", _url]}, Personal.WWW.Pages},
     {%{path: ["auth", "handshake"]}, Personal.WWW.AuthHandshake},
     {%{path: ["auth"]}, Personal.WWW.Auth},

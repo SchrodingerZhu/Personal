@@ -30,8 +30,8 @@ defmodule Personal.Application do
     ]
 
     {pri, pub} = Kcl.generate_key_pair()
-    System.put_env("auth_public", pub |> Base.encode64)
-    System.put_env("auth_private", pri |> Base.encode64)
+    System.put_env("auth_public", pub |> Base.encode64())
+    System.put_env("auth_private", pri |> Base.encode64())
 
     opts = [strategy: :one_for_one, name: Personal.Supervisor]
     Supervisor.start_link(children, opts)

@@ -87,6 +87,7 @@ defmodule Personal.SessionAgent do
         else
           send(client, nil)
         end
+
         life_cycle(sessions, tree, mark)
     after
       900_000 ->
@@ -105,7 +106,7 @@ defmodule Personal.SessionAgent do
 
   def check(uuid) do
     pid = Agent.get(__MODULE__, fn x -> x end)
-    send(pid, {:check, uuid, Kernel.self})
+    send(pid, {:check, uuid, Kernel.self()})
 
     receive do
       ans -> ans
@@ -114,7 +115,7 @@ defmodule Personal.SessionAgent do
 
   def check_login(uuid) do
     pid = Agent.get(__MODULE__, fn x -> x end)
-    send(pid, {:check_login, uuid, Kernel.self})
+    send(pid, {:check_login, uuid, Kernel.self()})
 
     receive do
       ans -> ans
@@ -134,9 +135,9 @@ defmodule Personal.SessionAgent do
   def get(uuid) do
     pid = Agent.get(__MODULE__, fn x -> x end)
     send(pid, {:get, uuid, Kernel.self()})
+
     receive do
       ans -> ans
     end
   end
-
 end

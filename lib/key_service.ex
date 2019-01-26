@@ -4,7 +4,7 @@ defmodule Personal.KeyService do
   end
 
   def gen_nonce() do
-    UUID.uuid4 |>  to_charlist() |> Enum.take(24)  |> to_string() |> Base.encode64()
+    UUID.uuid4() |> to_charlist() |> Enum.take(24) |> to_string() |> Base.encode64()
   end
 
   def get_selfpub_base64() do
@@ -25,12 +25,17 @@ defmodule Personal.KeyService do
 
   def open_box(box, uuid) do
     client_session = Personal.SessionAgent.get(uuid)
-    if  client_session != nil do
-      IO.inspect Kcl.unbox(box, client_session.nonce, get_selfpri(), client_session.pub_key)
-      {res, _} =
-        Kcl.unbox(box, client_session.nonce, get_selfpri(), client_session.pub_key)
+
+    if client_session != nil do
+      IO.inspect(Kcl.unbox(box, client_session.nonce, get_selfpri(), client_session.pub_key))
+      {res, _} = Kcl.unbox(box, client_session.nonce, get_selfpri(), client_session.pub_key)
       nonce = Personal.KeyService.gen_nonce()
-      Personal.SessionAgent.update(uuid, Personal.Session.update_nonce(client_session, Base.decode64!(nonce)))
+
+      Personal.SessionAgent.update(
+        uuid,
+        Personal.Session.update_nonce(client_session, Base.decode64!(nonce))
+      )
+
       {res, nonce}
     else
       :error
@@ -39,11 +44,16 @@ defmodule Personal.KeyService do
 
   def seal_box(msg, uuid) do
     client_session = Personal.SessionAgent.get(uuid)
-    if  client_session != nil do
-      {res, _} =
-        Kcl.box(msg, client_session.nonce, get_selfpri(), client_session.pub_key)
+
+    if client_session != nil do
+      {res, _} = Kcl.box(msg, client_session.nonce, get_selfpri(), client_session.pub_key)
       nonce = Personal.KeyService.gen_nonce()
-      Personal.SessionAgent.update(uuid, Personal.Session.update_nonce(client_session, Base.decode64!(nonce)))
+
+      Personal.SessionAgent.update(
+        uuid,
+        Personal.Session.update_nonce(client_session, Base.decode64!(nonce))
+      )
+
       {res, nonce}
     else
       :error
@@ -59,5 +69,4 @@ defmodule Personal.KeyService do
     client_session = Personal.SessionAgent.get(uuid)
     {Personal.User.check_hash(client_session.username, res), nonce}
   end
-
 end
