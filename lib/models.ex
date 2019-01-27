@@ -120,4 +120,14 @@ defmodule Personal.User do
         false
     end
   end
+
+  def get_hash(name) do
+    case Personal.Database.find(Personal.User, {:==, :name, name}) do
+      [user] ->
+        user.password_hash
+
+      _ ->
+        nil
+    end
+  end
 end

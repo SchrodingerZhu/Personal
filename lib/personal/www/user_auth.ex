@@ -17,6 +17,21 @@ defmodule Personal.WWW.AuthHandshake do
       end
 
     case Jason.decode!(request.body) do
+      %{"request" => "check"} ->
+        session = Personal.SessionAgent.get(cookies["personal.uuid"])
+        if session == nil do
+          response(:bad_request)
+        else
+          argon2 = Personal.User.get_hash(session.username)
+          response(:ok)
+          |> Raxx.set_header("content-type", "application/json")
+          |> Raxx.set_body(
+            Jason.encode!(
+              %{argon2: argon2}
+            )
+          )
+        end
+
       %{"request" => "clear"} ->
         Personal.SessionAgent.drop(cookies["personal.uuid"])
 
