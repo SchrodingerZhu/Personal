@@ -2,18 +2,14 @@
 <div class="login-page">
     <%= if !info do %>
      <div class="form">
-        <form class="login-username-form">
           <input type="text" placeholder="username" id="username"/>
-          <button onclick=buildSessionForm()>NEXT</button>
-        </form>      
+          <button onclick="buildSessionForm()">NEXT</button>  
      </div>
     <% else %>
     <div class="form">
-      <form class="login-password-form">
           <input type="password" placeholder="password" id="password"/>
           <button onclick="loginForm()">LOGIN</button>
           <button onclick="clearSession()">BACK</button>
-      </form>
       </div>
     <% end %>
 </div>
