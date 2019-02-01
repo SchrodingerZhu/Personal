@@ -13,9 +13,10 @@ defmodule Personal.Database do
     case {
       Memento.Table.create(Personal.Page, disc_copies: nodes),
       Memento.Table.create(Personal.Message, disc_copies: nodes),
-      Memento.Table.create(Personal.User, disc_copies: nodes)
+      Memento.Table.create(Personal.User, disc_copies: nodes),
+      Memento.Table.create(Personal.Pastebin, disc_copies: nodes)
     } do
-      {:ok, :ok, :ok} ->
+      {:ok, :ok, :ok, :ok} ->
         IO.puts("tables are successfully created.")
 
       message ->
