@@ -250,12 +250,14 @@ defmodule Personal.CacheAgent.Pastebin do
       !started ->
         tree =
           Personal.Database.find(Personal.Pastebin, {:!=, :expire_time, nil})
-          |> Enum.map(fn x -> {Time.diff(x.expire_time, base_time), x.id} end)
+          |> Enum.map(fn x -> {Time.diff(x.expire_time, base_time), x.id, x.name} end)
           |> Personal.Utils.RbTree.from_list()
 
         timer_start_link(true, tree, base_time)
 
       min_time_diff != nil and Time.add(base_time, min_time_diff) >= Time.utc_now() ->
+        send(Agent.get(:agents, fn {_, _, z} -> z end), {:drop, min.id})
+        drop_url(min.name)
         timer_start_link(true, Personal.Utils.RbTree.delete(expire_tree, min), base_time)
 
       true ->
@@ -281,7 +283,8 @@ defmodule Personal.CacheAgent do
   def init(args) do
     x = spawn_link(Personal.CacheAgent.Url, :start_link, [false])
     y = spawn_link(Personal.CacheAgent.Page, :start_link, [false, Personal.Utils.RbTree.new(), 0])
-    Agent.start_link(fn -> {x, y} end, name: :agents)
+    z = spawn_link(Personal.CacheAgent.Pastebin, :cache_start_link, [false, Personal.Utils.RbTree.new(), 0])
+    Agent.start_link(fn -> {x, y, z} end, name: :agents)
     {:ok, args}
   end
 end
