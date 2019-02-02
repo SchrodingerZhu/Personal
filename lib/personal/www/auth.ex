@@ -25,17 +25,17 @@ defmodule Personal.WWW.Auth do
     response(:ok) |> render( info)
   end
 
-  def handle_request(request = %{method: :POST}, _state) do
-    case URI.decode_query(request.body) do
-      %{"name" => name} ->
-        greeting = "Hello, #{name}!"
+  # def handle_request(request = %{method: :POST}, _state) do
+  #   case URI.decode_query(request.body) do
+  #     %{"name" => name} ->
+  #       greeting = "Hello, #{name}!"
 
-        response(:ok)
-        |> render(greeting)
+  #       response(:ok)
+  #       |> render(greeting)
 
-      _ ->
-        response(:bad_request)
-        |> render("Bad Request")
-    end
-  end
+  #     _ ->
+  #       response(:bad_request)
+  #       |> render("Bad Request")
+  #   end
+  # end
 end
