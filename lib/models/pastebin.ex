@@ -15,13 +15,15 @@ defmodule Personal.Pastebin do
   end
   def add(pastebin) do
     if has_name?(pastebin.name) do
-      IO.puts(:stderr, "failed to add user, already exists")
+      IO.puts(:stderr, "failed to add pastebin, already exists")
       :error
     else
       case Personal.Database.insert(pastebin) do
         {:ok, res} ->
           Personal.CacheAgent.Pastebin.put_newurl(res.name, res.id)
-          Personal.CacheAgent.Pastebin.put_timer(res)
+          if res.expire_time != nil do
+            Personal.CacheAgent.Pastebin.put_timer(res)
+          end
           :ok
 
         info ->

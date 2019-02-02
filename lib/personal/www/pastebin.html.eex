@@ -1,20 +1,23 @@
 <main class="centered">
   <section class="accent">
-    <h1><%= page.title %></h1>
-    <%=if page.is_markdown do %>
-      <%=raw Cmark.to_html(page.content) %>
-    <% else %>
-      <%=raw page.content%>
+    <%= case state do %>
+      <% {:not_logedin} -> %>
+        <h2> This is a private paste, login first!</h2>
+      <% {:open, paste} -> %>
+          <h1> <%=paste.name%> </h1>
+          <%=if paste.can_edit do %>
+            <textarea>
+              <%=raw paste.content%>
+            </textarea>
+            </p>
+            <button>resubmit</button>
+          <% else %>
+            <code>
+              <%=raw paste.content%>
+            </code>
+          <%end%>
+      <% {:loged_in, paste} -> %>
+            <-!--- handled by javascript  ---->
     <%end%>
-    <nav>
-      <a href="https://github.com/CrowdHailer/raxx">SOURCE CODE</a>
-      <a href="https://elixir-lang.slack.com/messages/C56H3TBH8/">CHAT</a>
-    </nav>
-    <%= javascript_variables title: page.title %>
-    <script type="text/javascript">
-      document.addEventListener('DOMContentLoaded', function () {
-        app.show(title)
-      })
-    </script>
   </section>
 </main>

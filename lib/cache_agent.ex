@@ -307,7 +307,7 @@ defmodule Personal.CacheAgent.Pastebin do
   end
 
   def get_cache(id) do
-    case Agent.get(__MODULE__, fn x -> x[id] end) do
+    case Agent.get(:pastebin_cache, fn x -> x[id] end) do
       nil ->
         paste = Personal.Database.get(Personal.Pastebin, id)
         put_newcache(id, paste)

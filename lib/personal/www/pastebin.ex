@@ -1,21 +1,39 @@
 defmodule Personal.WWW.Pastebin do
   use Raxx.SimpleServer
-  use Personal.WWW.Layout, arguments: [:page]
+  use Personal.WWW.Layout, arguments: [:state]
 
   @impl Raxx.SimpleServer
   def handle_request(request = %{method: :GET}, _state) do
-    [_, subpath] = Map.get(request,:path)
-    if Personal.CacheAgent.Url.has?(subpath) do
-      res = response(:ok)
-      page_id  = Personal.CacheAgent.Url.get(subpath)
-      page = Personal.CacheAgent.Page.get(page_id)
-      render(res, page)
-    else
+    [_, subpath] = Map.get(request, :path)
+    temp = Raxx.get_header(request, "cookie")
+
+    cookies =
+      if temp == nil do
+        %{}
+      else
+        Cookie.parse(temp)
+      end
+
+    uuid = cookies["personal.uuid"]
+
+    if not Personal.CacheAgent.Pastebin.has_url?(subpath) do
       Personal.WWW.NotFoundPage.handle_request(request, 404)
+    else
+      paste_id = Personal.CacheAgent.Pastebin.get_url(subpath)
+      paste = Personal.CacheAgent.Pastebin.get_cache(paste_id)
+
+      cond do
+        paste.is_open ->
+          response(:ok) |> render({:open, paste})
+
+        uuid != nil and Personal.SessionAgent.check_login(uuid) ->
+          response(:ok) |> render({:loged_in, paste})
+
+        true ->
+          response(:ok) |> render({:not_logedin})
+      end
     end
   end
-
-
 
   # def handle_request(request = %{method: :POST}, _state) do
   #   case URI.decode_query(request.body) do
