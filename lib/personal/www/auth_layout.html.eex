@@ -10,9 +10,9 @@
   </head>
   <body>
   <%= __content__ %>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/libsodium-wrappers/0.5.4/sodium.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js"></script>
+  <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="/sodium.min.js"></script>
+  <script src="/node_modules/blueimp-md5/js/md5.min.js"></script>
   <script src="/node_modules/argon2-browser/lib/argon2.js"></script>
   <script src="/main.js"></script>
   <script src="/auth.js"></script>

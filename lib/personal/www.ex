@@ -7,8 +7,8 @@ defmodule Personal.WWW do
     {%{method: :GET, path: ["pages", _url]}, Personal.WWW.Pages},
     {%{method: :POST, path: ["pastebin-api"]}, Personal.WWW.Pastebin},
     {%{method: :GET, path: ["pastebin", _url]}, Personal.WWW.Pastebin},
-    {%{path: ["auth", "handshake"]}, Personal.WWW.AuthHandshake},
-    {%{path: ["auth"]}, Personal.WWW.Auth},
+    {%{method: :POST, path: ["auth", "handshake"]}, Personal.WWW.AuthHandshake},
+    {%{method: :GET, path: ["auth"]}, Personal.WWW.Auth},
     {_, Personal.WWW.NotFoundPage}
   ])
 
@@ -17,6 +17,9 @@ defmodule Personal.WWW do
   @external_resource "lib/personal/public/main.js"
   @external_resource "lib/personal/public/node_modules/argon2-browser/lib/argon2.js"
   @external_resource "lib/personal/public/auth.js"
+  @external_resource "lib/personal/public/sodium.min.js"
+  @external_resource "lib/personal/public/node_modules/blueimp-md5/js/md5.min.js"
+  @external_resource "lib/personal/public/node_modules/jquery/dist/jquery.min.js"
   use Raxx.Static, "./public"
   use Raxx.Logger, level: :info
 end

@@ -1,10 +1,6 @@
 defmodule Personal.WWW.AuthHandshake do
   use Raxx.SimpleServer
   @impl Raxx.SimpleServer
-  def handle_request(request = %{method: :GET}, state) do
-    Personal.WWW.NotFoundPage.handle_request(request, state)
-  end
-
   def handle_request(request = %{method: :POST}, _state) do
     # IO.inspect(Jason.decode!(request.body))
     temp = Raxx.get_header(request, "cookie")
