@@ -3,6 +3,7 @@ defmodule Personal.WWW.PastebinApi do
 
   @impl Raxx.SimpleServer
   def handle_request(request = %{method: :POST}, _state) do
+
   end
 
 
