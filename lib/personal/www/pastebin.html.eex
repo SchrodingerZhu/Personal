@@ -6,15 +6,11 @@
       <% {:open, paste} -> %>
           <h1> <%=paste.name%> </h1>
           <%=if paste.can_edit do %>
-            <textarea>
-              <%=raw paste.content%>
-            </textarea>
+            <textarea><%=paste.content%></textarea>
             </p>
             <button>resubmit</button>
           <% else %>
-            <code>
-              <%=raw paste.content%>
-            </code>
+            <code><%=paste.content%></code>
           <%end%>
       <% {:loged_in, paste} -> %>
             <-!--- handled by javascript  ---->
