@@ -42,68 +42,75 @@ defmodule Personal.SessionAgent do
   def life_cycle(sessions, tree, mark) do
     import Personal.Utils.RbTree
 
-    if !is_empty?(tree) do
-      {the_mark, time, id} = min(tree)
-
-      if Time.diff(time, Time.utc_now(), :second) >= 1800 do
-        life_cycle(Map.delete(sessions, id), delete(tree, {the_mark, time, id}), mark)
+    {the_mark, time, id} =
+      case min(tree) do
+        nil -> {nil, nil, nil}
+        {a, b, c} -> {a, b, c}
       end
-    end
 
-    receive do
-      {:check, uuid, client} ->
-        send(client, Map.has_key?(sessions, uuid))
-        life_cycle(sessions, tree, mark)
+    cond do
+      !is_empty?(tree) and Time.diff(time, Time.utc_now(), :second) >= 1800 ->
+        life_cycle(Map.delete(sessions, id), delete(tree, {the_mark, time, id}), mark)
 
-      {:check_login, uuid, client} ->
-        case sessions[uuid] do
-          {session, _} ->
-            send(client, session.is_login)
-          _ ->
-            send(client, false)
-        end
-        life_cycle(sessions, tree, mark)
+      true ->
+        receive do
+          {:check, uuid, client} ->
+            send(client, Map.has_key?(sessions, uuid))
+            life_cycle(sessions, tree, mark)
 
-      {:put_new, session} ->
-        stamp = {mark, Time.utc_now(), session.id}
+          {:check_login, uuid, client} ->
+            case sessions[uuid] do
+              {session, _} ->
+                send(client, session.is_login)
 
-        life_cycle(
-          Map.put(sessions, session.id, {session, stamp}),
-          insert(tree, stamp),
-          mark + 1
-        )
+              _ ->
+                send(client, false)
+            end
 
-      {:drop, uuid} ->
-        {_, stamp} = sessions[uuid]
-        life_cycle(Map.delete(sessions, uuid), delete(tree, stamp), mark)
+            life_cycle(sessions, tree, mark)
 
-      {:update, uuid, session} ->
-        stamp = {mark, Time.utc_now(), session.id}
-        {_, old_stamp} = sessions[uuid]
-        new_sessions = sessions |> Map.update!(uuid, fn _ -> {session, stamp} end)
-        new_tree = delete(tree, old_stamp)
-        life_cycle(new_sessions, new_tree, mark + 1)
+          {:put_new, session} ->
+            stamp = {mark, Time.utc_now(), session.id}
 
-      {:get, uuid, client} ->
-        if Map.has_key?(sessions, uuid) do
-          {session, _} = sessions[uuid]
-          send(client, session)
-        else
-          send(client, nil)
-        end
+            life_cycle(
+              Map.put(sessions, session.id, {session, stamp}),
+              insert(tree, stamp),
+              mark + 1
+            )
 
-        life_cycle(sessions, tree, mark)
-    after
-      900_000 ->
-        if is_empty?(tree) do
-          life_cycle(sessions, tree, 0)
-        else
-          life_cycle(sessions, tree, mark)
+          {:drop, uuid} ->
+            {_, stamp} = sessions[uuid]
+            life_cycle(Map.delete(sessions, uuid), delete(tree, stamp), mark)
+
+          {:update, uuid, session} ->
+            stamp = {mark, Time.utc_now(), session.id}
+            {_, old_stamp} = sessions[uuid]
+            new_sessions = sessions |> Map.update!(uuid, fn _ -> {session, stamp} end)
+            new_tree = delete(tree, old_stamp)
+            life_cycle(new_sessions, new_tree, mark + 1)
+
+          {:get, uuid, client} ->
+            if Map.has_key?(sessions, uuid) do
+              {session, _} = sessions[uuid]
+              send(client, session)
+            else
+              send(client, nil)
+            end
+
+            life_cycle(sessions, tree, mark)
+        after
+          900_000 ->
+            if is_empty?(tree) do
+              life_cycle(sessions, tree, 0)
+            else
+              life_cycle(sessions, tree, mark)
+            end
         end
     end
   end
 
   def put_new(session) do
+    IO.inspect(session)
     pid = Agent.get(__MODULE__, fn x -> x end)
     send(pid, {:put_new, session})
   end
@@ -139,6 +146,7 @@ defmodule Personal.SessionAgent do
   def get(uuid) do
     pid = Agent.get(__MODULE__, fn x -> x end)
     send(pid, {:get, uuid, Kernel.self()})
+
     receive do
       ans -> ans
     end

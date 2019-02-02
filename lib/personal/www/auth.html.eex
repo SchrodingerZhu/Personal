@@ -1,16 +1,21 @@
 <main class="centered">
 <div class="login-page">
-    <%= if !info do %>
+    <%= case info do %>
+    <% :no_session -> %>
      <div class="form">
           <input type="text" placeholder="username" id="username"/>
           <button onclick="buildSessionForm()">NEXT</button>  
      </div>
-    <% else %>
+    <% :session_built -> %>
     <div class="form">
           <input type="password" placeholder="password" id="password"/>
           <button onclick="loginForm()">LOGIN</button>
           <button onclick="clearSession()">BACK</button>
       </div>
+    <% :loged_in -> %>
+    <div class="form">
+        <button onclick="logout()">LOGOUT</button>
+    </div>
     <% end %>
 </div>
 </main>
