@@ -1,15 +1,15 @@
 defmodule Personal.Page do
   use Memento.Table,
-    attributes: [:id, :title, :content, :status, :is_markdown, :url],
+    attributes: [:id, :title, :content, :is_open, :is_markdown, :url],
     index: [:title],
     type: :ordered_set,
     autoincrement: true
 
-  def new(title, content, status, is_markdown, url) do
+  def new(title, content, is_open, is_markdown, url) do
     %Personal.Page{
       title: title,
       content: content,
-      status: status,
+      is_open: is_open,
       is_markdown: is_markdown,
       url: url
     }

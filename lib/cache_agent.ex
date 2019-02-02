@@ -9,6 +9,8 @@ defmodule Personal.CacheAgent.Url do
         |> Enum.map(fn x -> {x.url, x.id} end)
         |> Map.new()
 
+      # debug info
+      IO.puts("current page urls: " <> Kernel.inspect(urls))
       Agent.start_link(fn -> urls end, name: __MODULE__)
     end
 
@@ -20,6 +22,7 @@ defmodule Personal.CacheAgent.Url do
   end
 
   def put_new(url, id) do
+    IO.puts("new url put")
     Agent.update(__MODULE__, fn x -> Map.put(x, url, id) end)
   end
 
@@ -102,12 +105,12 @@ defmodule Personal.CacheAgent.Page do
   end
 
   def put_new(id, page) do
-    {_, pid} = Agent.get(:agents, fn x -> x end)
+    pid = Agent.get(:agents, fn x -> x[:page_cache] end)
     send(pid, {:put_new, id, page})
   end
 
   def drop(id) do
-    {_, pid} = Agent.get(:agents, fn x -> x end)
+    pid = Agent.get(:agents, fn x -> x[:page_cache] end)
     send(pid, {:drop, id})
   end
 
@@ -134,7 +137,7 @@ defmodule Personal.CacheAgent.Page do
         end
 
       {page, _} ->
-        {_, pid} = Agent.get(:agents, fn x -> x end)
+        pid = Agent.get(:agents, fn x -> x[:page_cache] end)
         send(pid, {:update, id})
         page
     end
@@ -207,10 +210,13 @@ defmodule Personal.CacheAgent.Pastebin do
             cache_start_link(true, Personal.Utils.RbTree.insert(tree, stamp), mark + 1)
 
           {:drop, id} ->
-            {_, stamp} =
-              Agent.get_and_update(:pastebin_cache, fn x -> {x[id], Map.delete(x, id)} end)
+            case Agent.get_and_update(:pastebin_cache, fn x -> {x[id], Map.delete(x, id)} end) do
+              {_, stamp} ->
+                cache_start_link(true, Personal.Utils.RbTree.delete(tree, stamp), mark)
 
-            cache_start_link(true, Personal.Utils.RbTree.delete(tree, stamp), mark)
+              _ ->
+                cache_start_link(true, tree, mark)
+            end
 
           {:update, id} ->
             new_stamp = make_stamp(id, mark)
@@ -240,10 +246,10 @@ defmodule Personal.CacheAgent.Pastebin do
   def timer_start_link(started, expire_tree, base_time) do
     min = Personal.Utils.RbTree.min(expire_tree)
 
-    min_time_diff =
+    {min_time_diff, min_id, min_name} =
       case min do
-        nil -> nil
-        {a, _} -> a
+        nil -> {nil, nil, nil}
+        {a, b, c} -> {a, b, c}
       end
 
     cond do
@@ -255,21 +261,73 @@ defmodule Personal.CacheAgent.Pastebin do
 
         timer_start_link(true, tree, base_time)
 
-      min_time_diff != nil and Time.add(base_time, min_time_diff) >= Time.utc_now() ->
-        send(Agent.get(:agents, fn {_, _, z} -> z end), {:drop, min.id})
-        drop_url(min.name)
+      min_time_diff != nil and Time.diff(Time.utc_now(), Time.add(base_time, min_time_diff)) >= 0 ->
+        IO.puts(min_id)
+        drop_cache(min_id)
+        drop_url(min_name)
+        Personal.Database.remove_id(Personal.Pastebin, min_id)
         timer_start_link(true, Personal.Utils.RbTree.delete(expire_tree, min), base_time)
 
       true ->
         receive do
-          {:message_type, value} ->
-            nil
-            # code
+          {:drop, x} ->
+            timer_start_link(
+              true,
+              Personal.Utils.RbTree.delete(
+                expire_tree,
+                {Time.diff(x.expire_time, base_time), x.id, x.name}
+              ),
+              base_time
+            )
+
+          {:put, x} ->
+            timer_start_link(
+              true,
+              Personal.Utils.RbTree.insert(
+                expire_tree,
+                {Time.diff(x.expire_time, base_time), x.id, x.name}
+              ),
+              base_time
+            )
         after
-          300_000 ->
+          100_000 ->
             timer_start_link(true, expire_tree, base_time)
         end
     end
+  end
+
+  def put_newcache(id, paste) do
+    pid = Agent.get(:agents, fn x -> x[:pastebin_cache] end)
+    send(pid, {:put_new, id, paste})
+  end
+
+  def drop_cache(id) do
+    pid = Agent.get(:agents, fn x -> x[:pastebin_cache] end)
+    send(pid, {:drop, id})
+  end
+
+  def get_cache(id) do
+    case Agent.get(__MODULE__, fn x -> x[id] end) do
+      nil ->
+        paste = Personal.Database.get(Personal.Pastebin, id)
+        put_newcache(id, paste)
+        paste
+
+      {paste, _} ->
+        pid = Agent.get(:agents, fn x -> x[:pastebin_cache] end)
+        send(pid, {:update, id})
+        paste
+    end
+  end
+
+  def put_timer(paste) do
+    pid = Agent.get(:agents, fn x -> x[:pastebin_timer] end)
+    send(pid, {:put, paste})
+  end
+
+  def drop_timer(paste) do
+    pid = Agent.get(:agents, fn x -> x[:pastebin_timer] end)
+    send(pid, {:drop, paste})
   end
 end
 
@@ -281,10 +339,40 @@ defmodule Personal.CacheAgent do
   end
 
   def init(args) do
-    x = spawn_link(Personal.CacheAgent.Url, :start_link, [false])
-    y = spawn_link(Personal.CacheAgent.Page, :start_link, [false, Personal.Utils.RbTree.new(), 0])
-    z = spawn_link(Personal.CacheAgent.Pastebin, :cache_start_link, [false, Personal.Utils.RbTree.new(), 0])
-    Agent.start_link(fn -> {x, y, z} end, name: :agents)
+    page_url = spawn_link(Personal.CacheAgent.Url, :start_link, [false])
+
+    page_cache =
+      spawn_link(Personal.CacheAgent.Page, :start_link, [false, Personal.Utils.RbTree.new(), 0])
+
+    pastebin_cache =
+      spawn_link(Personal.CacheAgent.Pastebin, :cache_start_link, [
+        false,
+        Personal.Utils.RbTree.new(),
+        0
+      ])
+
+    pastebin_url = spawn_link(Personal.CacheAgent.Pastebin, :urls_start_link, [false])
+
+    pastebin_timer =
+      spawn_link(Personal.CacheAgent.Pastebin, :timer_start_link, [
+        false,
+        Personal.Utils.RbTree.new(),
+        Time.utc_now()
+      ])
+
+    Agent.start_link(
+      fn ->
+        %{
+          page_url: page_url,
+          page_cache: page_cache,
+          pastebin_cache: pastebin_cache,
+          pastebin_url: pastebin_url,
+          pastebin_timer: pastebin_timer
+        }
+      end,
+      name: :agents
+    )
+
     {:ok, args}
   end
 end
