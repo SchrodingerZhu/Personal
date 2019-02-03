@@ -1,6 +1,6 @@
 defmodule Personal.WWW.Pastebin do
   use Raxx.SimpleServer
-  use Personal.WWW.Layout, arguments: [:state]
+  use Personal.WWW.PastebinLayout, arguments: [:state]
 
   @impl Raxx.SimpleServer
   def handle_request(request = %{method: :GET}, _state) do

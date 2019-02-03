@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>personal</title>
+    <link rel="stylesheet" href="//fonts.lug.ustc.edu.cn/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="/main.css">
+    <link rel="icon" href="/favicon.ico">
+  </head>
+  <body>
+  <%= __content__ %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/libsodium-wrappers/0.5.4/sodium.min.js"></script>
+  <script type = "text/javascript" src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/Accessible-full.js"></script>
+  <script type = "text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
+  <script src="/main.js"></script>
+  <script>
+    if(typeof(paste_id) != 'undefined') {
+      var json = {
+        name: paste_name,
+        id: paste_id
+      }
+      $.post(
+        "/pastebin-api",
+        JSON.stringify(json),
+        function (result) {
+          var text = document.getElementById("text")
+          text.value = sodium.to_string(openBoxFromBase64(result.box, result.old_nonce))
+        }
+      )
+    }
+  </script>
+  </body>
+</html>

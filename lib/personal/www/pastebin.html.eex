@@ -13,7 +13,20 @@
             <code><%=paste.content%></code>
           <%end%>
       <% {:loged_in, paste} -> %>
-            <-!--- handled by javascript  ---->
+            <h1> <%=paste.name%> </h1>
+            <script>
+              paste_id = <%=paste.id%>
+              paste_name = "<%=raw paste.name%>"
+              paste_can_edit = <%=raw paste.can_edit%>
+            </script>
+            <%=if paste.can_edit do %>
+            <textarea id="text">loading……</textarea>
+            </p>
+            <button>resubmit</button>
+          <% else %>
+            <code id="text">loading……</code>
+          <%end%>
     <%end%>
   </section>
 </main>
+

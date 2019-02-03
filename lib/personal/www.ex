@@ -5,7 +5,7 @@ defmodule Personal.WWW do
   section([], [
     {%{path: []}, Personal.WWW.HomePage},
     {%{method: :GET, path: ["pages", _url]}, Personal.WWW.Pages},
-    {%{method: :POST, path: ["pastebin-api"]}, Personal.WWW.Pastebin},
+    {%{method: :POST, path: ["pastebin-api"]}, Personal.WWW.PastebinApi},
     {%{method: :GET, path: ["pastebin", _url]}, Personal.WWW.Pastebin},
     {%{method: :POST, path: ["auth", "handshake"]}, Personal.WWW.AuthHandshake},
     {%{method: :GET, path: ["auth"]}, Personal.WWW.Auth},

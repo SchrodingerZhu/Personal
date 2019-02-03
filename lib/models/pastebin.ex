@@ -20,7 +20,7 @@ defmodule Personal.Pastebin do
     else
       case Personal.Database.insert(pastebin) do
         {:ok, res} ->
-          Personal.CacheAgent.Pastebin.put_newurl(res.name, res.id)
+          Personal.CacheAgent.Pastebin.put_newurl(res.name, res.id, res.is_open)
           if res.expire_time != nil do
             Personal.CacheAgent.Pastebin.put_timer(res)
           end
