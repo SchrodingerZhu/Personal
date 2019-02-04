@@ -5,27 +5,35 @@
         <h2> This is a private paste, login first!</h2>
       <% {:open, paste} -> %>
           <h1> <%=paste.name%> </h1>
-          <%=if paste.can_edit do %>
-            <textarea><%=paste.content%></textarea>
-            </p>
-            <button>resubmit</button>
-          <% else %>
-            <code><%=paste.content%></code>
-          <%end%>
+          <script>
+            paste_id = <%=paste.id%>
+            paste_name = "<%=raw paste.name%>"
+            paste_can_edit = <%=raw paste.can_edit%>
+          </script>
+        <%=if paste.expire_time != nil do %>
+          <p> <%=paste.expire_time |> Time.to_string%></p>
+        <% end %>
+        <%=if paste.can_edit do %>
+          <textarea id="text"><%=paste.content%></textarea>
+          </p>
+          <button onclick="openSubmit()">resubmit</button>
+        <% else %>
+          <code id="text"><%=paste.content%></code>
+        <%end%>
       <% {:loged_in, paste} -> %>
-            <h1> <%=paste.name%> </h1>
-            <script>
-              paste_id = <%=paste.id%>
-              paste_name = "<%=raw paste.name%>"
-              paste_can_edit = <%=raw paste.can_edit%>
-            </script>
-            <%=if paste.can_edit do %>
-            <textarea id="text">loading……</textarea>
-            </p>
-            <button>resubmit</button>
-          <% else %>
-            <code id="text">loading……</code>
-          <%end%>
+          <h1> <%=paste.name%> </h1>
+          <script>
+            paste_id = <%=paste.id%>
+            paste_name = "<%=raw paste.name%>"
+            paste_can_edit = <%=raw paste.can_edit%>
+          </script>
+        <%=if paste.can_edit do %>
+          <textarea id="text">loading……</textarea>
+          </p>
+          <button>resubmit</button>
+        <% else %>
+          <code id="text">loading……</code>
+        <%end%>
     <%end%>
   </section>
 </main>

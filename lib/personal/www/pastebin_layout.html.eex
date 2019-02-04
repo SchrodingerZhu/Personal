@@ -15,11 +15,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/Accessible-full.js"></script>
   <script type = "text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
   <script src="/main.js"></script>
+  <script src="/pastebin.js">
   <script>
     if(typeof(paste_id) != 'undefined') {
       var json = {
         name: paste_name,
-        id: paste_id
+        id: paste_id,
+        request: "get_box"
       }
       var nonce = getCookie("personal.nonce")
       $.post(

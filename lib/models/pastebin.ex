@@ -32,4 +32,29 @@ defmodule Personal.Pastebin do
       end
     end
   end
+
+  def update(pastebin) do
+    if has_name?(pastebin.name) do
+      if pastebin.expire_time != nil do
+        Personal.CacheAgent.Pastebin.drop_timer(pastebin)
+      end
+      Personal.CacheAgent.Pastebin.drop_cache(pastebin.id)
+      Personal.CacheAgent.Pastebin.drop_url(pastebin.name)
+      case Personal.Database.insert(pastebin) do
+        {:ok, res} ->
+          Personal.CacheAgent.Pastebin.put_newurl(res.name, res.id, res.is_open)
+          if res.expire_time != nil do
+            Personal.CacheAgent.Pastebin.put_timer(res)
+          end
+          :ok
+
+        info ->
+          IO.puts(:stderr, "failed to add pastebin")
+          {:error, info}
+      end
+    else
+      IO.puts(:stderr, "failed to update pastebin, not exists")
+      :error
+    end
+  end
 end

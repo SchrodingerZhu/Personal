@@ -20,6 +20,7 @@ defmodule Personal.WWW do
   @external_resource "lib/personal/public/sodium.min.js"
   @external_resource "lib/personal/public/node_modules/blueimp-md5/js/md5.min.js"
   @external_resource "lib/personal/public/node_modules/jquery/dist/jquery.min.js"
+  @external_resource "lib/personal/public/pastebin.js"
   use Raxx.Static, "./public"
   use Raxx.Logger, level: :info
 end

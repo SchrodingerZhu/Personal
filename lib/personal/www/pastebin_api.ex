@@ -14,6 +14,7 @@ defmodule Personal.WWW.PastebinApi do
 
     uuid = cookies["personal.uuid"]
     content = Jason.decode!(request.body)
+    IO.inspect(content)
 
     cond do
       content["name"] == nil or !Personal.CacheAgent.Pastebin.has_url?(content["name"]) ->
@@ -26,19 +27,38 @@ defmodule Personal.WWW.PastebinApi do
         |> Raxx.set_body(Jason.encode!(%{error: "please login first"}))
 
       true ->
-        id = Personal.CacheAgent.Pastebin.get_url(content["name"])
-        {box, nonce} = Personal.KeyService.seal_box(Personal.CacheAgent.Pastebin.get_cache(id).content, uuid)
-        response(:ok)
-        |> Raxx.set_header(
-          "set-cookie",
-          SetCookie.serialize("personal.nonce", nonce, http_only: false)
-        )
-        |> Raxx.set_header(
-          "content-type", "application/json"
-        )
-        |> Raxx.set_body(
-          Jason.encode!(%{box: Base.encode64(box)})
-        )
+        case content do
+          %{"request" => "get_box", "name" => _name, "id" => id} ->
+            {box, nonce} =
+              Personal.KeyService.seal_box(
+                Personal.CacheAgent.Pastebin.get_cache(id).content,
+                uuid
+              )
+
+            response(:ok)
+            |> Raxx.set_header(
+              "set-cookie",
+              SetCookie.serialize("personal.nonce", nonce, http_only: false)
+            )
+            |> Raxx.set_header(
+              "content-type",
+              "application/json"
+            )
+            |> Raxx.set_body(Jason.encode!(%{box: Base.encode64(box)}))
+
+          %{"request" => "open_submit", "id" => id, "name" => _name, "new_content" => new_content} ->
+            new_paste =
+              id
+              |> Personal.CacheAgent.Pastebin.get_cache()
+              |> Map.update!(:content, fn _ -> new_content end)
+
+            if new_paste.can_edit and new_paste.is_open do
+              Personal.Pastebin.update(new_paste)
+              response(:ok)
+            else
+              response(:bad_request)
+            end
+        end
     end
   end
 
