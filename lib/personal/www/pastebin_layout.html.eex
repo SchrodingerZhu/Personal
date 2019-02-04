@@ -21,12 +21,13 @@
         name: paste_name,
         id: paste_id
       }
+      var nonce = getCookie("personal.nonce")
       $.post(
         "/pastebin-api",
         JSON.stringify(json),
         function (result) {
           var text = document.getElementById("text")
-          text.value = sodium.to_string(openBoxFromBase64(result.box, result.old_nonce))
+          text.value = sodium.to_string(openBoxFromBase64(result.box, nonce))
         }
       )
     }

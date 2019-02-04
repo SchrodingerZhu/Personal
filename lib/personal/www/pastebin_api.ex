@@ -13,7 +13,6 @@ defmodule Personal.WWW.PastebinApi do
       end
 
     uuid = cookies["personal.uuid"]
-    old_nonce = cookies["personal.nonce"]
     content = Jason.decode!(request.body)
 
     cond do
@@ -38,7 +37,7 @@ defmodule Personal.WWW.PastebinApi do
           "content-type", "application/json"
         )
         |> Raxx.set_body(
-          Jason.encode!(%{box: Base.encode64(box), old_nonce: old_nonce})
+          Jason.encode!(%{box: Base.encode64(box)})
         )
     end
   end
