@@ -58,6 +58,35 @@ defmodule Personal.WWW.PastebinApi do
             else
               response(:bad_request)
             end
+
+          %{
+            "request" => "boxed_submit",
+            "id" => id,
+            "name" => _name,
+            "boxed_new_content" => boxed_new_content
+          } ->
+            {new_content, nonce} = Personal.KeyService.open_box(Base.decode64!(boxed_new_content), uuid)
+
+            new_paste =
+              id
+              |> Personal.CacheAgent.Pastebin.get_cache()
+              |> Map.update!(:content, fn _ -> new_content end)
+
+            if new_paste.can_edit and !new_paste.is_open do
+              Personal.Pastebin.update(new_paste)
+
+              response(:ok)
+              |> Raxx.set_header(
+                "set-cookie",
+                SetCookie.serialize("personal.nonce", nonce, http_only: false)
+              )
+            else
+              response(:bad_request)
+              |> Raxx.set_header(
+                "set-cookie",
+                SetCookie.serialize("personal.nonce", nonce, http_only: false)
+              )
+            end
         end
     end
   end

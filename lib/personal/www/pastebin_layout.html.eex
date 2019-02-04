@@ -15,7 +15,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/Accessible-full.js"></script>
   <script type = "text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
   <script src="/main.js"></script>
-  <script src="/pastebin.js">
+  <script src="/pastebin.js"></script>
   <script>
     if(typeof(paste_id) != 'undefined') {
       var json = {

@@ -30,7 +30,7 @@
         <%=if paste.can_edit do %>
           <textarea id="text">loading……</textarea>
           </p>
-          <button>resubmit</button>
+          <button onclick="boxedSubmit()">resubmit</button>
         <% else %>
           <code id="text">loading……</code>
         <%end%>
