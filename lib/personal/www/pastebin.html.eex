@@ -9,6 +9,7 @@
             paste_id = <%=paste.id%>
             paste_name = "<%=raw paste.name%>"
             paste_can_edit = <%=raw paste.can_edit%>
+            paste_is_open = <%=raw paste.is_open%>
           </script>
         <%=if paste.expire_time != nil do %>
           <p> <%=paste.expire_time |> Time.to_string%></p>
@@ -26,6 +27,7 @@
             paste_id = <%=paste.id%>
             paste_name = "<%=raw paste.name%>"
             paste_can_edit = <%=raw paste.can_edit%>
+            paste_is_open = <%=raw paste.is_open%>
           </script>
         <%=if paste.can_edit do %>
           <textarea id="text">loading……</textarea>

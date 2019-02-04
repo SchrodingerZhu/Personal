@@ -17,7 +17,7 @@
   <script src="/main.js"></script>
   <script src="/pastebin.js"></script>
   <script>
-    if(typeof(paste_id) != 'undefined') {
+    if(typeof(paste_is_open) != 'undefined' && !paste_is_open) {
       var json = {
         name: paste_name,
         id: paste_id,
