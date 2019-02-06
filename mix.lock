@@ -23,7 +23,7 @@
   "poly1305": {:hex, :poly1305, "1.0.2", "c6bb74cbe79747cc12aa1580791c2bd8e0f062bc8faaf117b756e675cfaea03d", [:mix], [{:chacha20, "~> 1.0", [hex: :chacha20, repo: "hexpm", optional: false]}, {:equivalex, "~> 1.0", [hex: :equivalex, repo: "hexpm", optional: false]}], "hexpm"},
   "raxx": {:hex, :raxx, "0.17.6", "74f5fde4d7b14e3e605a10f37931ef9d7852b059fa77ba96af1fb881e3eb2201", [:mix], [{:cookie, "~> 0.1.0", [hex: :cookie, repo: "hexpm", optional: false]}, {:eex_html, "~> 0.1.1 or ~> 0.2.0", [hex: :eex_html, repo: "hexpm", optional: false]}], "hexpm"},
   "raxx_logger": {:hex, :raxx_logger, "0.2.0", "8d9760890924c99c977fba31c9cba375913cce0cdc480b2617be9041e32ca609", [:mix], [{:raxx, "~> 0.17.5", [hex: :raxx, repo: "hexpm", optional: false]}], "hexpm"},
-  "raxx_static": {:hex, :raxx_static, "0.8.0", "8f9c9584bc01cc53e95a544f147d8234eed3c20aaaad9e2a994308e560d43836", [:mix], [{:mime, "~> 1.1", [hex: :mime, repo: "hexpm", optional: false]}, {:raxx, "~> 0.17.0", [hex: :raxx, repo: "hexpm", optional: false]}], "hexpm"},
+  "raxx_static": {:git, "https://github.com/schrodingerzhu/raxx_static.git", "f1f1d7b6bda8ee8a65aa377548820892b09dbfee", []},
   "raxx_view": {:hex, :raxx_view, "0.1.0", "9c6254fc66107f544ee4a9ab7271353baed42d80614b2f1d96f1edf4b0be1d48", [:mix], [{:raxx, "~> 0.17.6", [hex: :raxx, repo: "hexpm", optional: false]}], "hexpm"},
   "salsa20": {:hex, :salsa20, "1.0.2", "558fddb4169b1f90b1748d42e9221ba8d1354c414a03361308cc7bc0fd2f45c7", [:mix], [], "hexpm"},
   "uuid": {:hex, :uuid, "1.1.8", "e22fc04499de0de3ed1116b770c7737779f226ceefa0badb3592e64d5cfb4eb9", [:mix], [], "hexpm"},

@@ -290,7 +290,7 @@ defmodule Personal.CacheAgent.Pastebin do
               base_time
             )
         after
-          1_000 ->
+          60_000 ->
             timer_start_link(true, expire_tree, base_time)
         end
     end

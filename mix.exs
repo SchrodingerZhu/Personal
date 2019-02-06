@@ -26,7 +26,7 @@ defmodule Personal.Mixfile do
       {:ace, "~> 0.18"},
       {:memento, "~> 0.2"},
       {:cmark, "~> 0.7"},
-      {:raxx_static, "~> 0.8"},
+      {:raxx_static, github: "schrodingerzhu/raxx_static"},
       {:exsync, "~> 0.2"},
       {:comeonin, "~> 4.1"},
       {:argon2_elixir, "~> 1.3"},
