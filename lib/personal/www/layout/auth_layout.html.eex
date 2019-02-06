@@ -10,12 +10,12 @@
   </head>
   <body>
   <%= __content__ %>
-  <script src="/node_modules/jquery/dist/jquery.min.js"></script>
-  <script src="/sodium.min.js"></script>
-  <script src="/node_modules/blueimp-md5/js/md5.min.js"></script>
-  <script src="/node_modules/argon2-browser/lib/argon2.js"></script>
-  <script src="/main.js"></script>
-  <script src="/auth.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/libsodium-wrappers/0.5.4/sodium.min.js"></script>
+  <script type="text/javascript" src="/node_modules/blueimp-md5/js/md5.min.js"></script>
+  <script type="text/javascript" src="/node_modules/argon2-browser/lib/argon2.js"></script>
+  <script type="text/javascript" src="/main.js"></script>
+  <script type="text/javascript" src="/auth.js"></script>
   <script> 
     function buildSessionForm() {
       var username = document.getElementById('username').value

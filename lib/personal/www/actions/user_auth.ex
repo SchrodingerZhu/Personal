@@ -3,6 +3,7 @@ defmodule Personal.WWW.AuthHandshake do
   @impl Raxx.SimpleServer
   def handle_request(request = %{method: :POST}, _state) do
     # IO.inspect(Jason.decode!(request.body))
+    IO.inspect(request)
     temp = Raxx.get_header(request, "cookie")
 
     cookies =

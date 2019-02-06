@@ -29,22 +29,28 @@ defmodule Personal.WWW.PastebinApi do
       true ->
         case content do
           %{"request" => "get_box", "name" => _name, "id" => id} ->
-            {box, nonce} =
-              Personal.KeyService.seal_box(
-                Personal.CacheAgent.Pastebin.get_cache(id).content,
-                uuid
-              )
+            paste = Personal.CacheAgent.Pastebin.get_cache(id)
 
-            response(:ok)
-            |> Raxx.set_header(
-              "set-cookie",
-              SetCookie.serialize("personal.nonce", nonce, http_only: false)
-            )
-            |> Raxx.set_header(
-              "content-type",
-              "application/json"
-            )
-            |> Raxx.set_body(Jason.encode!(%{box: Base.encode64(box)}))
+            if !paste.is_open do
+              {box, nonce} =
+                Personal.KeyService.seal_box(
+                  paste.content,
+                  uuid
+                )
+
+              response(:ok)
+              |> Raxx.set_header(
+                "set-cookie",
+                SetCookie.serialize("personal.nonce", nonce, http_only: false)
+              )
+              |> Raxx.set_header(
+                "content-type",
+                "application/json"
+              )
+              |> Raxx.set_body(Jason.encode!(%{box: Base.encode64(box)}))
+            else
+              response(:bad_request)
+            end
 
           %{"request" => "open_submit", "id" => id, "name" => _name, "new_content" => new_content} ->
             new_paste =
@@ -65,7 +71,8 @@ defmodule Personal.WWW.PastebinApi do
             "name" => _name,
             "boxed_new_content" => boxed_new_content
           } ->
-            {new_content, nonce} = Personal.KeyService.open_box(Base.decode64!(boxed_new_content), uuid)
+            {new_content, nonce} =
+              Personal.KeyService.open_box(Base.decode64!(boxed_new_content), uuid)
 
             new_paste =
               id

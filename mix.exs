@@ -23,16 +23,17 @@ defmodule Personal.Mixfile do
 
   defp deps do
     [
-      {:ace, "~> 0.18.0"},
-      {:memento, "~> 0.2.1"},
+      {:ace, "~> 0.18"},
+      {:memento, "~> 0.2"},
       {:cmark, "~> 0.7"},
-      {:raxx_static, "~> 0.7.0"},
-      {:exsync, "~> 0.2.3"},
+      {:raxx_static, "~> 0.8"},
+      {:exsync, "~> 0.2"},
       {:comeonin, "~> 4.1"},
       {:argon2_elixir, "~> 1.3"},
       {:kcl, "~> 1.1"},
-      {:exqueue, "~> 0.1.2"},
-      {:uuid, "~> 1.1"}
+      {:uuid, "~> 1.1"},
+      {:raxx_logger, "~> 0.2"},
+      {:raxx_view, "~> 0.1"}
     ]
   end
 

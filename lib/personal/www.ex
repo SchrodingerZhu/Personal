@@ -1,26 +1,42 @@
 defmodule Personal.WWW do
-  use Ace.HTTP.Service, port: 8080, cleartext: true
-  use Raxx.Router
+  @external_resource "lib/personal/www/public/main.css"
+  @external_resource "lib/personal/www/public/auth.css"
+  @external_resource "lib/personal/www/public/main.js"
+  @external_resource "lib/personal/www/public/node_modules/argon2-browser/lib/argon2.js"
+  @external_resource "lib/personal/www/public/auth.js"
+  @external_resource "lib/personal/www/public/sodium.min.js"
+  @external_resource "lib/personal/www/public/node_modules/blueimp-md5/js/md5.min.js"
+  @external_resource "lib/personal/www/public/node_modules/jquery/dist/jquery.min.js"
+  @external_resource "lib/personal/www/public/pastebin.js"
+  def child_spec([config, server_options]) do
+    {:ok, port} = Keyword.fetch(server_options, :port)
 
-  section([], [
-    {%{path: []}, Personal.WWW.HomePage},
-    {%{method: :GET, path: ["pages", _url]}, Personal.WWW.Pages},
-    {%{method: :POST, path: ["pastebin-api"]}, Personal.WWW.PastebinApi},
-    {%{method: :GET, path: ["pastebin", _url]}, Personal.WWW.Pastebin},
-    {%{method: :POST, path: ["auth", "handshake"]}, Personal.WWW.AuthHandshake},
-    {%{method: :GET, path: ["auth"]}, Personal.WWW.Auth},
-    {_, Personal.WWW.NotFoundPage}
-  ])
+    %{
+      id: {__MODULE__, port},
+      start: {__MODULE__, :start_link, [config, server_options]},
+      type: :supervisor
+    }
+  end
+  options = [source: Path.join(__DIR__, "www/public")]
 
-  @external_resource "lib/personal/public/main.css"
-  @external_resource "lib/personal/public/auth.css"
-  @external_resource "lib/personal/public/main.js"
-  @external_resource "lib/personal/public/node_modules/argon2-browser/lib/argon2.js"
-  @external_resource "lib/personal/public/auth.js"
-  @external_resource "lib/personal/public/sodium.min.js"
-  @external_resource "lib/personal/public/node_modules/blueimp-md5/js/md5.min.js"
-  @external_resource "lib/personal/public/node_modules/jquery/dist/jquery.min.js"
-  @external_resource "lib/personal/public/pastebin.js"
-  use Raxx.Static, "./public"
-  use Raxx.Logger, level: :info
+  @static_setup (if(Mix.env() == :dev) do
+                   options
+                 else
+                   Raxx.Static.setup(options)
+                 end)
+
+  def start_link(config, server_options) do
+    stack =
+      Raxx.Stack.new(
+        [
+          {Raxx.Static, @static_setup}
+        ],
+        {__MODULE__.Router, config}
+      )
+
+    Ace.HTTP.Service.start_link(stack, server_options)
+  end
+
+
+
 end
