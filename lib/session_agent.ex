@@ -79,8 +79,13 @@ defmodule Personal.SessionAgent do
             )
 
           {:drop, uuid} ->
-            {_, stamp} = sessions[uuid]
-            life_cycle(Map.delete(sessions, uuid), delete(tree, stamp), mark)
+            case sessions[uuid] do
+              {_, stamp} -> 
+                life_cycle(Map.delete(sessions, uuid), delete(tree, stamp), mark)
+              _ ->
+                life_cycle(sessions, tree, mark)
+            end
+            
 
           {:update, uuid, session} ->
             stamp = {mark, Time.utc_now(), session.id}
