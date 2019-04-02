@@ -5,7 +5,7 @@ defmodule Personal.Mixfile do
     [
       app: :personal,
       version: "0.1.0",
-      elixir: "~> 1.8.0-rc.1",
+      elixir: "~> 1.8.1",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -24,12 +24,12 @@ defmodule Personal.Mixfile do
   defp deps do
     [
       {:ace, "~> 0.18"},
-      {:memento, "~> 0.2"},
+      {:memento, "~> 0.3"},
       {:cmark, "~> 0.7"},
-      {:raxx_static, github: "schrodingerzhu/raxx_static"},
+      {:raxx_static, "0.8.2"},
       {:exsync, "~> 0.2"},
-      {:comeonin, "~> 4.1"},
-      {:argon2_elixir, "~> 1.3"},
+      {:comeonin, "~> 5.1"},
+      {:argon2_elixir, "~> 2.0"},
       {:kcl, "~> 1.1"},
       {:uuid, "~> 1.1"},
       {:raxx_logger, "~> 0.2"},

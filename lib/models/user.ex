@@ -53,7 +53,7 @@ defmodule Personal.User do
   def check_hash(name, password) do
     case Personal.Database.find(Personal.User, {:==, :name, name}) do
       [user] ->
-        case Comeonin.Argon2.check_pass(user, password) do
+        case Argon2.check_pass(user, password) do
           {:ok, _} -> true
           _ -> false
         end
