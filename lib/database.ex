@@ -56,12 +56,11 @@ defmodule Personal.Database do
   end
 
   def all(type) do
-    {:ok, result} =
-      Memento.transaction(fn ->
-        Memento.Query.all(type)
-      end)
-
-    result
+    case Memento.transaction(fn -> Memento.Query.all(type) end) do
+      {:ok, result} -> result
+      {:error, {:no_exists, _}} -> []
+      _ -> :error
+    end
   end
 
   def get(type, id) do
@@ -74,11 +73,10 @@ defmodule Personal.Database do
   end
 
   def find(type, opt) do
-    {:ok, result} =
-      Memento.transaction(fn ->
-        Memento.Query.select(type, opt)
-      end)
-
-    result
+    case Memento.transaction(fn -> Memento.Query.select(type, opt) end) do
+      {:ok, result} -> result
+      {:error, {:no_exists, _}} -> []
+      _ -> :error
+    end
   end
 end

@@ -11,12 +11,12 @@ defmodule Personal.User do
         :invalid_email
 
       input_type == :raw ->
-        hashed = Comeonin.Argon2.add_hash(Personal.KeyService.raw_md5(password))
-        %Personal.User{name: name, password_hash: hashed.password_hash, email: email}
+        hashed = Argon2.hash_pwd_salt(Personal.KeyService.raw_md5(password), [salt_len: 8])
+        %Personal.User{name: name, password_hash: hashed, email: email}
 
       input_type == :md5 ->
-        hashed = Comeonin.Argon2.add_hash(password)
-        %Personal.User{name: name, password_hash: hashed.password_hash, email: email}
+        hashed = Argon2.hash_pwd_salt(password, [salt_len: 8])
+        %Personal.User{name: name, password_hash: hashed, email: email}
     end
   end
 
