@@ -2,11 +2,12 @@ defmodule Personal.WWW do
   @external_resource "lib/personal/www/public/main.css"
   @external_resource "lib/personal/www/public/auth.css"
   @external_resource "lib/personal/www/public/main.js"
-  @external_resource "lib/personal/www/public/node_modules/argon2-browser/lib/argon2.js"
   @external_resource "lib/personal/www/public/auth.js"
   @external_resource "lib/personal/www/public/sodium.min.js"
   @external_resource "lib/personal/www/public/node_modules/blueimp-md5/js/md5.min.js"
   @external_resource "lib/personal/www/public/node_modules/jquery/dist/jquery.min.js"
+  @external_resource "lib/personal/www/public/node_modules/argon2-browser/dist/argon2.js"
+  @external_resource "lib/personal/www/public/argon2.wasm"
   @external_resource "lib/personal/www/public/pastebin.js"
   def child_spec([config, server_options]) do
     {:ok, port} = Keyword.fetch(server_options, :port)
