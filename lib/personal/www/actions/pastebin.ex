@@ -23,7 +23,7 @@ defmodule Personal.WWW.Pastebin do
       paste = Personal.CacheAgent.Pastebin.get_cache(paste_id)
 
       cond do
-        paste.is_open ->
+        paste.security_level == 0 ->
           response(:ok) |> render({:open, paste})
 
         uuid != nil and Personal.SessionAgent.check_login(uuid) ->

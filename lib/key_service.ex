@@ -60,8 +60,8 @@ defmodule Personal.KeyService do
     end
   end
 
-  def raw_md5(content) do
-    :crypto.hash(:md5, content) |> Base.encode16() |> String.downcase()
+  def raw_sha3(content) do
+    ExSha3.sha3_512(content) |> Base.encode16() |> String.downcase()
   end
 
   def compare_boxedkey(keybox, uuid) do

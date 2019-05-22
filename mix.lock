@@ -11,6 +11,7 @@
   "eex_html": {:hex, :eex_html, "1.0.0", "c88020b584d5bfc48ef6c18176af2cfed558225fc5290b435e73119b8ce98ce0", [:mix], [{:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: true]}], "hexpm"},
   "elixir_make": {:hex, :elixir_make, "0.5.2", "96a28c79f5b8d34879cd95ebc04d2a0d678cfbbd3e74c43cb63a76adf0ee8054", [:mix], [], "hexpm"},
   "equivalex": {:hex, :equivalex, "1.0.2", "b9a9aaf79f2556288f514218653beaddb15afa2af407bfec37c5c4906e39f514", [:mix], [], "hexpm"},
+  "ex_sha3": {:hex, :ex_sha3, "0.1.1", "8972638de7ded220cb885d6a8889c0df9da0d581d25c3b1b94a85a226b6fe874", [:mix], [], "hexpm"},
   "exceptional": {:hex, :exceptional, "2.1.1", "f18f8c1be63aab7fe8f3000cf2a8678936544fc39af1e2bc4a5c3c9e38cd8899", [:mix], [], "hexpm"},
   "exsync": {:hex, :exsync, "0.2.3", "a1ac11b4bd3808706003dbe587902101fcc1387d9fc55e8b10972f13a563dd15", [:mix], [{:file_system, "~> 0.2", [hex: :file_system, repo: "hexpm", optional: false]}], "hexpm"},
   "file_system": {:hex, :file_system, "0.2.7", "e6f7f155970975789f26e77b8b8d8ab084c59844d8ecfaf58cbda31c494d14aa", [:mix], [], "hexpm"},

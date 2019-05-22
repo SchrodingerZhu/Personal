@@ -149,7 +149,7 @@ defmodule Personal.CacheAgent.Pastebin do
     if !flag do
       pastes =
         Personal.Database.all(Personal.Pastebin)
-        |> Enum.map(fn x -> {x.name, %{id: x.id, is_open: x.is_open}} end)
+        |> Enum.map(fn x -> {x.name, %{id: x.id, security_level: x.security_level}} end)
         |> Map.new()
 
       Agent.start_link(fn -> pastes end, name: :pastebin_urls)
@@ -162,8 +162,8 @@ defmodule Personal.CacheAgent.Pastebin do
     end
   end
 
-  def put_newurl(url, id, is_open) do
-    Agent.update(:pastebin_urls, fn x -> Map.put(x, url, %{id: id, is_open: is_open}) end)
+  def put_newurl(url, id, security_level) do
+    Agent.update(:pastebin_urls, fn x -> Map.put(x, url, %{id: id, security_level: security_level}) end)
   end
 
   def drop_url(url) do
@@ -306,8 +306,8 @@ defmodule Personal.CacheAgent.Pastebin do
     send(pid, {:drop, id})
   end
 
-  def is_open?(url) do
-    Agent.get(:pastebin_urls, fn x -> x[url][:is_open] end)
+  def security_level(url) do
+    Agent.get(:pastebin_urls, fn x -> x[url][:security_level] end)
   end
 
   @spec get_cache(any()) :: any()

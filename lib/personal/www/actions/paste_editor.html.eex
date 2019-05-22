@@ -1,0 +1,20 @@
+<span>Title: </span><input></input>
+<span>Language: </span>
+<select id="language-select" onchange=languageOnChange()></select>
+<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+
+<script src="/monaco-editor/min/vs/loader.js"></script>
+<script src="editor.utils.js"></script>
+<script>
+    require.config({ paths: { 'vs': 'monaco-editor/min/vs' }});
+    require(['vs/editor/editor.main'], function() {
+        var editor = monaco.editor.create(document.getElementById('container'), {
+            value: [
+                "Enjoy your typing!"
+            ].join('\n'),
+            language: 'plaintext'
+        });
+        monaco.editor.setTheme("vs-dark");
+        genSelections();
+    });
+</script>

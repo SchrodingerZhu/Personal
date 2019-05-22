@@ -11,10 +11,10 @@ defmodule Personal.User do
         :invalid_email
 
       input_type == :raw ->
-        hashed = Argon2.Base.hash_password(Personal.KeyService.raw_md5(password), Argon2.gen_salt, [t_cost: 4, m_cost: 12])
+        hashed = Argon2.Base.hash_password(Personal.KeyService.raw_sha3(password), Argon2.gen_salt, [t_cost: 4, m_cost: 12])
         %Personal.User{name: name, password_hash: hashed, email: email}
 
-      input_type == :md5 ->
+      input_type == :sha3 ->
         hashed = Argon2.Base.hash_password(password, Argon2.gen_salt, [t_cost: 4, m_cost: 12])
         %Personal.User{name: name, password_hash: hashed, email: email}
     end

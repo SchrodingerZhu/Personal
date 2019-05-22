@@ -37,7 +37,8 @@ defmodule Personal.Mixfile do
       {:raxx_view, "~> 0.1"},
       {:algae, "~> 1.2"},
       {:jason, "~> 1.1"},
-      {:cookie, "~> 0.1.1"}
+      {:cookie, "~> 0.1.1"},
+      {:ex_sha3, "~> 0.1.1"}
     ]
   end
 

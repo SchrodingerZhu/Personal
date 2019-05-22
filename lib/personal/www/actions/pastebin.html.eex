@@ -9,9 +9,9 @@
             paste_id = <%=paste.id%>
             paste_name = "<%=raw paste.name%>"
             paste_can_edit = <%=raw paste.can_edit%>
-            paste_is_open = <%=raw paste.is_open%>
+            paste_security_level = <%=raw paste.security_level%>
           </script>
-        <%=if paste.expire_time != nil do %>
+        <%=if paste.expire_time != :never do %>
           <p> <%=paste.expire_time |> Time.to_string%></p>
         <% end %>
         <%=if paste.can_edit do %>

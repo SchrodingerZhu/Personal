@@ -1,11 +1,18 @@
 defmodule Personal.Pastebin do
   use Memento.Table,
-    attributes: [:id, :name, :expire_time, :is_open, :can_edit, :content],
+    attributes: [:id, :name, :expire_time, :can_edit, :content, :security_level, :password],
     index: [:name],
     type: :ordered_set,
     autoincrement: true
-  def new(name, expire_time, is_open, can_edit, content) do
-    %Personal.Pastebin{name: name, expire_time: expire_time, is_open: is_open, can_edit: can_edit, content: content}
+  def new(name, content, expire_time \\ :never, security_level \\ 0, can_edit \\ false, password \\ "0") do
+    %Personal.Pastebin{
+      name: name, 
+      expire_time: expire_time, 
+      can_edit: can_edit, 
+      content: content,
+      security_level: security_level,
+      password: ExSha3.sha3_512(password)
+    }
   end
   def has_name?(name) do
     case Personal.Database.find(Personal.Pastebin, {:==, :name, name}) do
@@ -20,8 +27,8 @@ defmodule Personal.Pastebin do
     else
       case Personal.Database.insert(pastebin) do
         {:ok, res} ->
-          Personal.CacheAgent.Pastebin.put_newurl(res.name, res.id, res.is_open)
-          if res.expire_time != nil do
+          Personal.CacheAgent.Pastebin.put_newurl(res.name, res.id, res.security_level)
+          if res.expire_time != :never do
             Personal.CacheAgent.Pastebin.put_timer(res)
           end
           :ok
