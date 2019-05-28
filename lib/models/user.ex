@@ -72,4 +72,18 @@ defmodule Personal.User do
         nil
     end
   end
+
+  def request_login?(request) do
+    temp = Raxx.get_header(request, "cookie")
+
+    cookies =
+      if temp == nil do
+        false
+      else
+        Cookie.parse(temp)
+      end
+
+    uuid = cookies["personal.uuid"]
+    uuid != nil and Personal.SessionAgent.check(uuid) and Personal.SessionAgent.check_login(uuid)
+  end
 end

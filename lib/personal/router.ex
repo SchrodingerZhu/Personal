@@ -7,7 +7,8 @@ defmodule Personal.WWW.Router do
         {%{method: :GET, path: ["pastebin", _url]}, Personal.WWW.Pastebin},
         {%{method: :POST, path: ["auth", "handshake"]}, Personal.WWW.AuthHandshake},
         {%{method: :GET, path: ["auth"]}, Personal.WWW.Auth},
-        {%{method: :GET, path: ["editor"]}, Personal.WWW.Editor},
+        {%{method: :GET, path: ["paste", "new"]}, Personal.WWW.PasteEditor},
+        {%{method: :POST, path: ["paste", "api"]}, Personal.WWW.PasteEditor},
         {_, Personal.WWW.NotFoundPage}
       ])
   end

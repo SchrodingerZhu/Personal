@@ -1,12 +1,14 @@
-<span>Title: </span><input></input>
+<%= if visit_type == :new_paste do %>
+    <span>Title: </span> <input id="title">
+<%end%>
 <span>Language: </span>
 <select id="language-select" onchange=languageOnChange()></select>
 <div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
 
 <script src="/monaco-editor/min/vs/loader.js"></script>
-<script src="editor.utils.js"></script>
+<script src="/editor.utils.js"></script>
 <script>
-    require.config({ paths: { 'vs': 'monaco-editor/min/vs' }});
+    require.config({ paths: { 'vs': '/monaco-editor/min/vs' }});
     require(['vs/editor/editor.main'], function() {
         var editor = monaco.editor.create(document.getElementById('container'), {
             value: [
@@ -18,3 +20,14 @@
         genSelections();
     });
 </script>
+<p> editable <input type="checkbox" id="editable"> </p>
+<p> password <input id="password" value=""></p>
+<p>
+    <select id="level"> 
+        <option> open paste </option>
+        <option> private paste </option>
+        <option> password paste </option>
+    </select>
+</p>
+<p> expire in <input id="expire" value=""> minutes </p>
+<p><button id="submit" type="submit"> submit </button></p>
