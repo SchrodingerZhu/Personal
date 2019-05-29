@@ -1,17 +1,23 @@
 defmodule Personal.Pastebin do
   use Memento.Table,
-    attributes: [:id, :name, :expire_time, :can_edit, :content, :security_level, :password],
+    attributes: [:id, :name, :expire_time, :can_edit, :content, :security_level, :password, :language],
     index: [:name],
     type: :ordered_set,
     autoincrement: true
-  def new(name, content, expire_time \\ :never, security_level \\ 0, can_edit \\ false, password \\ "0") do
+  def new(name, content, expire_time \\ :never, security_level \\ 0, can_edit \\ false, password \\ nil, language \\ "plaintext") do
     %Personal.Pastebin{
       name: name, 
       expire_time: expire_time, 
       can_edit: can_edit, 
       content: content,
       security_level: security_level,
-      password: ExSha3.sha3_512(password)
+      password: if password != nil do 
+        ExSha3.sha3_512(password)
+      else
+        nil
+      end,
+      language: language
+
     }
   end
   def has_name?(name) do

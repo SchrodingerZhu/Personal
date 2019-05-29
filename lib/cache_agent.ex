@@ -182,6 +182,10 @@ defmodule Personal.CacheAgent.Pastebin do
     {mark, Time.utc_now(), id}
   end
 
+  def is_open?(name) do
+    Agent.get(:pastebin_urls, fn x -> x[name][:security_level] end) == 0
+  end
+
   def cache_start_link(started, tree, mark) do
     min = Personal.Utils.RbTree.min(tree)
 
@@ -255,7 +259,7 @@ defmodule Personal.CacheAgent.Pastebin do
     cond do
       !started ->
         tree =
-          Personal.Database.find(Personal.Pastebin, {:!=, :expire_time, nil})
+          Personal.Database.find(Personal.Pastebin, {:!=, :expire_time, :never})
           |> Enum.map(fn x -> {Time.diff(x.expire_time, base_time), x.id, x.name} end)
           |> Personal.Utils.RbTree.from_list()
 

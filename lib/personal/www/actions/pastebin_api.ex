@@ -30,8 +30,7 @@ defmodule Personal.WWW.PastebinApi do
         case content do
           %{"request" => "get_box", "name" => _name, "id" => id} ->
             paste = Personal.CacheAgent.Pastebin.get_cache(id)
-
-            if !paste.is_open do
+            if paste.security_level == 1 do
               {box, nonce} =
                 Personal.KeyService.seal_box(
                   paste.content,
@@ -58,7 +57,7 @@ defmodule Personal.WWW.PastebinApi do
               |> Personal.CacheAgent.Pastebin.get_cache()
               |> Map.update!(:content, fn _ -> new_content end)
 
-            if new_paste.can_edit and new_paste.is_open do
+            if new_paste.can_edit and new_paste.security_level == 0 do
               Personal.Pastebin.update(new_paste)
               response(:ok)
             else
@@ -79,7 +78,7 @@ defmodule Personal.WWW.PastebinApi do
               |> Personal.CacheAgent.Pastebin.get_cache()
               |> Map.update!(:content, fn _ -> new_content end)
 
-            if new_paste.can_edit and !new_paste.is_open do
+            if new_paste.can_edit and new_paste.security_level == 1 do
               Personal.Pastebin.update(new_paste)
 
               response(:ok)

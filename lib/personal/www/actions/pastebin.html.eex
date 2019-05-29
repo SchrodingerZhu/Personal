@@ -15,11 +15,34 @@
           <p> <%=paste.expire_time |> Time.to_string%></p>
         <% end %>
         <%=if paste.can_edit do %>
-          <textarea id="text"><%=paste.content%></textarea>
-          </p>
+          <div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+          <script src="/monaco-editor/min/vs/loader.js"></script>
+          <script src="/editor.utils.js"></script>
+          <script>
+            require.config({ paths: { 'vs': '/monaco-editor/min/vs' }});
+            require(['vs/editor/editor.main'], function() {
+            var editor = monaco.editor.create(document.getElementById('container'), {
+            value: <%=raw Kernel.inspect paste.content%>,
+            language: "<%=raw paste.language%>"
+            });
+            monaco.editor.setTheme("vs-dark");
+            });
+          </script>
           <button onclick="openSubmit()">resubmit</button>
         <% else %>
-          <code id="text"><%=paste.content%></code>
+          <div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+          <script src="/monaco-editor/min/vs/loader.js"></script>
+          <script src="/editor.utils.js"></script>
+          <script>
+            require.config({ paths: { 'vs': '/monaco-editor/min/vs' }});
+            require(['vs/editor/editor.main'], function() {
+            var editor = monaco.editor.create(document.getElementById('container'), {
+            value: <%=raw Kernel.inspect paste.content%>,
+            language: "<%=raw paste.language%>"
+            });
+            monaco.editor.setTheme("vs-dark");
+            });
+          </script>
         <%end%>
       <% {:loged_in, paste} -> %>
           <h1> <%=paste.name%> </h1>
@@ -27,14 +50,37 @@
             paste_id = <%=paste.id%>
             paste_name = "<%=raw paste.name%>"
             paste_can_edit = <%=raw paste.can_edit%>
-            paste_is_open = <%=raw paste.is_open%>
+            paste_is_open = <%=raw (paste.security_level==0)%>
           </script>
         <%=if paste.can_edit do %>
-          <textarea id="text">loading……</textarea>
-          </p>
+          <div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+          <script src="/monaco-editor/min/vs/loader.js"></script>
+          <script src="/editor.utils.js"></script>
+          <script>
+            require.config({ paths: { 'vs': '/monaco-editor/min/vs' }});
+            require(['vs/editor/editor.main'], function() {
+            var editor = monaco.editor.create(document.getElementById('container'), {
+            value: "loading...",
+            language: "<%=raw paste.language%>"
+            });
+            monaco.editor.setTheme("vs-dark");
+            });
+          </script>
           <button onclick="boxedSubmit()">resubmit</button>
         <% else %>
-          <code id="text">loading……</code>
+          <div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+          <script src="/monaco-editor/min/vs/loader.js"></script>
+          <script src="/editor.utils.js"></script>
+          <script>
+            require.config({ paths: { 'vs': '/monaco-editor/min/vs' }});
+            require(['vs/editor/editor.main'], function() {
+            var editor = monaco.editor.create(document.getElementById('container'), {
+            value: "loading...",
+            language: "<%=raw paste.language%>"
+            });
+            monaco.editor.setTheme("vs-dark");
+            });
+          </script>
         <%end%>
     <%end%>
   </section>

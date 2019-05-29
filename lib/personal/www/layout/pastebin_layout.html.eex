@@ -6,17 +6,18 @@
     <link rel="stylesheet" href="//fonts.lug.ustc.edu.cn/css?family=Roboto:300,300italic,700,700italic">
     <link rel="stylesheet" href="/main.css">
     <link rel="icon" href="/favicon.ico">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/libsodium-wrappers/0.5.4/sodium.min.js"></script>
   </head>
   <body>
   <%= __content__ %>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/libsodium-wrappers/0.5.4/sodium.min.js"></script>
   <script type = "text/javascript" src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/Accessible-full.js"></script>
   <script type = "text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
   <script src="/main.js"></script>
   <script src="/pastebin.js"></script>
   <script>
+  require(['vs/editor/editor.main'], function() {
     if(typeof(paste_is_open) != 'undefined' && !paste_is_open) {
       var json = {
         name: paste_name,
@@ -28,11 +29,12 @@
         "/pastebin-api",
         JSON.stringify(json),
         function (result) {
-          var text = document.getElementById("text")
-          text.value = sodium.to_string(openBoxFromBase64(result.box, nonce))
+          var text = sodium.to_string(openBoxFromBase64(result.box, nonce));
+          monaco.editor.getModel("inmemory://model/1").setValue(text);
         }
       )
     }
+  });
   </script>
   </body>
 </html>
