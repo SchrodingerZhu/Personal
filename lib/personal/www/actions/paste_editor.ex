@@ -36,7 +36,7 @@ defmodule Personal.WWW.PasteEditor do
         if res["expire"] == 0 do
           :never
         else
-          Time.add(Time.utc_now(), res["expire"], :minute)
+          Time.add(Time.utc_now(), res["expire"] * 60, :second)
         end
 
       password =
