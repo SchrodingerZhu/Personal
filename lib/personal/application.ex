@@ -27,6 +27,9 @@ defmodule Personal.Application do
 
     opts = [strategy: :one_for_one, name: Personal.Supervisor]
     Supervisor.start_link(children, opts)
+    receive do
+      
+    end
   end
 
   defp port() do
